@@ -1,5 +1,0 @@
-# javcdn
-JAV网站资源下载
-JAV_item下载网站所有影片信息
-JAV_mag根据获得的详细页地址获取磁力链接
-JAV_cover下载封面图
