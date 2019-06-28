@@ -49,6 +49,7 @@ class YoumaSpider(scrapy.Spider):
             print(next_url)
             yield scrapy.Request(next_url,
                                  callback=self.parse,
+                                 dont_filter=True,
                                  )
 
 

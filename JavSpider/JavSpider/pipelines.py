@@ -5,6 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from openpyxl import Workbook
+import pymongo
 from JavSpider.spiders.youma import YoumaSpider
 from JavSpider.spiders.wuma import WumaSpider
 from openpyxl import load_workbook
@@ -22,12 +23,16 @@ class JavspiderPipeline(object):
         '''
         initialize the object
         '''
+        self.jav_count = 0
         self.wuma_count = 0
         self.youma_count = 0
         self.oumei_count = 0
         self.wb = Workbook()
         self.ws = self.wb.active
         self.ws.append(['番号', '标题', '发行日期', '详细页地址', '封面地址', '分类', '演员', '磁力链接'])
+        myclient = pymongo.MongoClient('mongodb://localhost:27017/')
+        mydb = myclient['spiders']
+        self.post = mydb["javcdn"]
     # def open_spider(self, spider):
     #     self.wb = Workbook('C:\\Users\\lushe\\Desktop\\新建工作表.xlsx')
     #     print(self.wb)
@@ -64,21 +69,35 @@ class JavspiderPipeline(object):
             self.wuma_count += 1
             print('已下载 %s, %d:' % (spider.name, self.wuma_count))
             self.wb.save('C:\\Users\\lushe\\Desktop\\无码.xlsx')
-            return item
+
         if spider.name == 'youma':
             line = [item['number'],item['title'],item['pdate'],item['detail_link'],item['cover'],item['fenlei'],item['actor'],item['maglinks']]
             self.ws.append(line)
             self.youma_count += 1
             print('已下载 %s, %d:' % (spider.name, self.youma_count))
             self.wb.save('C:\\Users\\lushe\\Desktop\\有码.xlsx')
-            return item
+
         if spider.name == 'oumei':
             line = [item['number'],item['title'],item['pdate'],item['detail_link'],item['cover'],item['fenlei'],item['actor'],item['maglinks']]
             self.ws.append(line)
             self.oumei_count += 1
             print('已下载 %s, %d:' % (spider.name, self.oumei_count))
             self.wb.save('C:\\Users\\lushe\\Desktop\\欧美.xlsx')
-            return item
+        if spider.name == 'jav':
+            line = [item['number'],item['title'],item['pdate'],item['detail_link'],item['cover'],item['fenlei'],item['actor'],item['maglinks']]
+            self.ws.append(line)
+            self.jav_count += 1
+            print('已下载 %s, %d:' % (spider.name, self.jav_count))
+            self.wb.save('C:\\Users\\lushe\\Desktop\\jav.xlsx')
+
+        item['spider'] = spider.name
+        data = dict(item)
+        # print(data)
+        x = self.post.update({'number': data['number']}, {'$set': data}, upsert=True)
+        # x = self.post.insert_one(data)
+        print(x['_id'])
+        return item
+
         # if spider.name == 'youma':
         #     self.ws.append(line)
         #     YoumaSpider.count += 1

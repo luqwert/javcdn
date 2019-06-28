@@ -18,13 +18,19 @@ BOT_NAME = 'JavSpider'
 SPIDER_MODULES = ['JavSpider.spiders']
 NEWSPIDER_MODULE = 'JavSpider.spiders'
 
-LOG_LEVER = 'INFO'
+LOG_LEVER = 'WORNING'
 LOG_FILE = './log.log'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
+
+REDIS_URL = 'redis://127.0.0.1:6379'
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+SCHEDULER_PERSIST = False
+
 
 # COMMANDS_MODULE = 'JavSpider.commands'
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
@@ -73,6 +79,7 @@ COOKIES = {'4fJN_2132_lastact': '1546160245%09misc.php%09seccode', 'HstCla412749
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'JavSpider.pipelines.JavspiderPipeline': 300,
+    'scrapy_redis.pipelines.RedisPipeline': 400,
 
 }
 

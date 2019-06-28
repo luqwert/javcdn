@@ -18,4 +18,5 @@ class JavspiderItem(scrapy.Item):
     fenlei = scrapy.Field()
     actor = scrapy.Field()
     maglinks = scrapy.Field()
+    spider = scrapy.Field()
 
